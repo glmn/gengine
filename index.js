@@ -5,15 +5,11 @@ const mongoURI = "mongodb://localhost:27017/gEngine"
 var express = require("express");
 var parse = require('url-parse')
 var router = express.Router();
+var https = require('https')
 var fs = require('fs');
 
 var privateKey = fs.readFileSync('/etc/letsencrypt/live/wupdater.guru/privkey.pem');
 var certificate = fs.readFileSync('/etc/letsencrypt/live/wupdater.guru/fullchain.pem');
-
-var credentials = {key: privateKey, cert: certificate};
-
-
-var app = express.createServer(credentials);
 
 app.use(
   express.urlencoded({
@@ -118,9 +114,14 @@ async function init(){
     res.json(response);
   });
 
-  app.listen(80, '0.0.0.0', () => {
-    console.log("Server running on port 80");
-  });
+  https.createServer({
+    key: privateKey,
+    cert: certificate
+  }, app).listen(81);
+
+  // app.listen(80, '0.0.0.0', () => {
+  //   console.log("Server running on port 80");
+  // });
 
 }
 
