@@ -5,7 +5,15 @@ const mongoURI = "mongodb://localhost:27017/gEngine"
 var express = require("express");
 var parse = require('url-parse')
 var router = express.Router();
-var app = express();
+
+var privateKey = fs.readFileSync('/etc/letsencrypt/live/wupdater.guru/privkey.pem');
+var certificate = fs.readFileSync('/etc/letsencrypt/live/wupdater.guru/fullchain.pem');
+
+var credentials = {key: privateKey, cert: certificate};
+
+
+var app = express.createServer(credentials);
+
 app.use(
   express.urlencoded({
     extended: true
